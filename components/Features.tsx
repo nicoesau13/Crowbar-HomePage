@@ -22,16 +22,6 @@ function FeatureIcon({ name }: { name: FeatureKey }) {
           <path d="M3 16.5h26" strokeWidth="2.25" className="stroke-accent" />
         </svg>
       );
-    case "multi":
-      return (
-        <svg {...common}>
-          <rect x="3" y="4" width="10" height="7" />
-          <rect x="3" y="13" width="10" height="7" />
-          <rect x="3" y="22" width="10" height="7" />
-          <path d="M13 7.5h6v8.5M13 16.5h6M13 25.5h6V17" />
-          <rect x="21" y="12.5" width="8" height="8" className="fill-accent stroke-accent" />
-        </svg>
-      );
     case "cite":
       return (
         <svg {...common}>

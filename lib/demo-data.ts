@@ -15,6 +15,8 @@ export type Source = {
   meta: string;
   /** Text shown in the fake address bar when this source is open. */
   address: string;
+  /** Video length, shown in the player. */
+  duration?: string;
 };
 
 export type Locator = {
@@ -54,6 +56,7 @@ export const sources: Source[] = [
     title: "Lecture 3: Cellular Respiration & the ETC",
     meta: "YouTube · 48:12",
     address: "youtube.com/watch?v=lecture-3-respiration",
+    duration: "48:12",
   },
   {
     id: "paper",

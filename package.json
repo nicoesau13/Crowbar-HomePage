@@ -9,13 +9,28 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "video:preview": "remotion studio",
+    "video:render": "remotion render CrowbarMaster public/video/crowbar-demo.mp4 && npm run video:poster && npm run video:captions",
+    "video:render:vertical": "remotion render CrowbarVertical public/video/crowbar-demo-vertical.mp4",
+    "video:poster": "remotion still CrowbarMaster public/video/crowbar-demo-poster.jpg --frame=775 --image-format=jpeg --jpeg-quality=82",
+    "video:captions": "tsx video/scripts/make-vtt.ts",
+    "video:stills": "tsx video/scripts/stills.ts",
+    "video:still-at": "tsx video/scripts/still-at.ts"
   },
   "dependencies": {
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@remotion/bundler": "^4.0.535",
+    "@remotion/cli": "^4.0.535",
+    "@remotion/renderer": "^4.0.535",
+    "@remotion/tailwind": "^4.0.535",
     "framer-motion": "^12.43.0",
     "next": "^15.5.28",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.535"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
@@ -29,6 +44,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "3.4",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }

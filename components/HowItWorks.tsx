@@ -13,11 +13,11 @@ export function HowItWorks() {
         <SectionHeader
           id="how-title"
           eyebrow="How it works"
-          title="Open a page and ask. Go deeper only if you need to."
-          intro="Instant mode needs zero setup: Crowbar answers from the page you're on. Deep mode is there when the assignment gets bigger."
+          title="Open a page. Ask. Check the proof."
+          intro="No setup: Crowbar answers from the page you're on."
         />
 
-        <ol className="mt-14 grid gap-6 md:grid-cols-3">
+        <ol className="mt-14 grid gap-6 md:grid-cols-2">
           {steps.map((step, i) => (
             <li key={step.n}>
               <Reveal

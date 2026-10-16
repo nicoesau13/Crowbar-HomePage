@@ -3,12 +3,14 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { validateEmail } from "@/lib/validate-email";
 
+const FORMSPREE_URL = "https://formspree.io/f/xppqkgrb";
+
 type Status =
   { kind: "idle" } | { kind: "error"; message: string } | { kind: "success"; email: string };
 
 /**
- * UI-only early-access signup. Validates client-side and shows a success state.
- * Nothing is stored or sent.
+ * Early-access signup. Validates client-side, then posts the email to Formspree,
+ * where signups show up in the dashboard.
  */
 export function EarlyAccessForm() {
   const [email, setEmail] = useState("");
@@ -22,7 +24,9 @@ export function EarlyAccessForm() {
     if (status.kind === "success") successRef.current?.focus();
   }, [status.kind]);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  const [sending, setSending] = useState(false);
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const result = validateEmail(email);
     if (!result.ok) {
@@ -31,11 +35,28 @@ export function EarlyAccessForm() {
       return;
     }
 
-    // TODO(backend): send `result.value` to the waitlist endpoint here, e.g.
-    //   await fetch("/api/early-access", { method: "POST", body: JSON.stringify({ email: result.value }) })
-    // and handle network/duplicate errors before showing success.
-    // Until then, nothing is stored or transmitted.
-    setStatus({ kind: "success", email: result.value });
+    setSending(true);
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ email: result.value }),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as {
+          errors?: { message?: string }[];
+        } | null;
+        throw new Error(data?.errors?.[0]?.message ?? "Something went wrong. Try again.");
+      }
+      setStatus({ kind: "success", email: result.value });
+    } catch (err) {
+      setStatus({
+        kind: "error",
+        message: err instanceof Error ? err.message : "Something went wrong. Try again.",
+      });
+    } finally {
+      setSending(false);
+    }
   }
 
   if (status.kind === "success") {
@@ -90,8 +111,8 @@ export function EarlyAccessForm() {
             hasError ? "border-danger" : "border-line-strong/70"
           }`}
         />
-        <button type="submit" className="btn-primary h-12 px-6 text-base">
-          Get early access
+        <button type="submit" disabled={sending} className="btn-primary h-12 px-6 text-base">
+          {sending ? "Sending…" : "Get early access"}
         </button>
       </div>
       <p id={errorId} className="mt-2 min-h-[1.25rem] text-sm text-danger" aria-live="polite">

@@ -6,8 +6,8 @@ export const hero = {
   eyebrow: "Research side panel · for students",
   headline: ["One question.", "Any page.", "Proof attached."],
   subhead:
-    "Crowbar works on whatever you're looking at: open the panel on any article, video or PDF and ask, with every claim cited to the exact passage or timestamp. Need more? Deep mode searches across every source you add.",
-  secondaryCta: { label: "Try the demo", href: "#demo" },
+    "Crowbar works on whatever you're looking at: open the panel on any article, video or PDF and ask, with every claim cited to the exact passage or timestamp.",
+  secondaryCta: { label: "Try the demo", href: "/demo" },
   note: "Free during early access. Chrome first.",
 };
 
@@ -29,8 +29,6 @@ export const problem = {
     label: "With Crowbar",
     items: [
       "No copying and pasting into a chatbot: it already sees the page you're on",
-      "Go deeper by asking across every source you've added",
-      "Get one answer that reconciles them, disagreements included",
       "Every claim cites the timestamp, page or paragraph",
       "Click a citation to jump straight there and verify",
     ],
@@ -52,13 +50,6 @@ export const steps = [
     detail: "[This page · ¶3]",
     optional: false,
   },
-  {
-    n: "03",
-    title: "Add sources to go deeper",
-    body: "For bigger work, like comparing lectures or writing a research paper, add YouTube videos, articles and PDFs. Deep mode searches across all of them and still cites every claim.",
-    detail: "+ youtube · article · pdf",
-    optional: true,
-  },
 ];
 
 export const features = [
@@ -66,11 +57,6 @@ export const features = [
     key: "page",
     title: "Knows what you're looking at",
     body: "Crowbar reads the page you're on, whether it's an article, a video or a PDF, so you can ask right away. Nothing to copy, paste or upload.",
-  },
-  {
-    key: "multi",
-    title: "Go deeper with more sources",
-    body: "For research papers or comparing lectures, add videos, articles and PDFs. Deep mode answers across all of them and shows where they agree and where they don't.",
   },
   {
     key: "cite",
