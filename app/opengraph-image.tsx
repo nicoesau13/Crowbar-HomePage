@@ -47,7 +47,7 @@ export default function OpenGraphImage() {
           One question.
         </div>
         <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -3, lineHeight: 1 }}>
-          Every source.
+          Any page.
         </div>
         <div
           style={{
@@ -71,10 +71,10 @@ export default function OpenGraphImage() {
         }}
       >
         <span style={{ border: "2px solid #ff5a1f", color: "#ededea", padding: "4px 12px" }}>
-          Lecture 3 · 12:45
+          This page · ¶3
         </span>
-        <span style={{ border: "2px solid #46464c", padding: "4px 12px" }}>Paper.pdf · p.4</span>
-        <span style={{ padding: "4px 0" }}>Research side panel for students</span>
+        <span style={{ border: "2px solid #46464c", padding: "4px 12px" }}>Lecture 3 · 12:45</span>
+        <span style={{ padding: "4px 0" }}>{"Works on whatever you're reading"}</span>
       </div>
     </div>,
     size,

@@ -1,12 +1,14 @@
 "use client";
 
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CitationChip } from "@/components/ui/CitationChip";
 import { LogoMark } from "@/components/ui/Logo";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SourceIcon } from "@/components/ui/SourceIcon";
 import {
+  PAGE_SOURCE_ID,
+  articleParagraphIds,
   citationLabel,
   getSource,
   locators,
@@ -18,6 +20,15 @@ import {
 
 const CHARS_PER_TICK = 3;
 const TICK_MS = 22;
+
+const pageSource = getSource(PAGE_SOURCE_ID);
+const extraSources = sources.filter((s) => s.id !== PAGE_SOURCE_ID);
+// Instant-mode questions first, then the ones that need added sources.
+const orderedQuestions = [
+  ...questions.filter((q) => q.mode === "instant"),
+  ...questions.filter((q) => q.mode === "deep"),
+];
+const firstDeepId = orderedQuestions.find((q) => q.mode === "deep")?.id;
 
 function toSeconds(stamp: string): number {
   const [mm, ss] = stamp.split(":").map(Number);
@@ -33,11 +44,17 @@ function addressFor(source: Source, loc: Locator | null): string {
 
 export function Demo() {
   const reduceMotion = useReducedMotion();
+  const [sourcesAdded, setSourcesAdded] = useState(false);
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [shown, setShown] = useState(0);
   const [preview, setPreview] = useState<string | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
-  const [tabSource, setTabSource] = useState<string>(sources[0].id);
+  const [tabSource, setTabSource] = useState<string>(PAGE_SOURCE_ID);
+  const [announcement, setAnnouncement] = useState("");
+  const firstDeepQuestion = useRef<HTMLButtonElement>(null);
+  const focusDeepOnAdd = useRef(false);
+
+  const visibleSources = sourcesAdded ? [pageSource, ...extraSources] : [pageSource];
 
   const question = questions.find((q) => q.id === questionId) ?? null;
   const total = question ? question.segments.reduce((n, s) => n + s.text.length, 0) : 0;
@@ -77,16 +94,48 @@ export function Demo() {
     setTabSource(locators[latestCite].sourceId);
   }, [latestCite]);
 
+  // After sources are added, move focus to the first question they unlock.
+  useEffect(() => {
+    if (sourcesAdded && focusDeepOnAdd.current) {
+      focusDeepOnAdd.current = false;
+      firstDeepQuestion.current?.focus();
+    }
+  }, [sourcesAdded]);
+
   const activeLocId = preview ?? pinned;
   const activeLoc = activeLocId ? locators[activeLocId] : null;
   const viewSource = getSource(activeLoc?.sourceId ?? tabSource);
   const viewLoc = activeLoc && activeLoc.sourceId === viewSource.id ? activeLoc : null;
 
   function ask(id: string) {
+    const q = questions.find((x) => x.id === id);
+    if (q?.mode === "deep" && !sourcesAdded) {
+      setAnnouncement("This question needs more sources. Add sources first to unlock deep mode.");
+      return;
+    }
+    setAnnouncement("");
     setQuestionId(id);
     setShown(0);
     setPinned(null);
     setPreview(null);
+  }
+
+  function addSources() {
+    focusDeepOnAdd.current = true;
+    setSourcesAdded(true);
+    setAnnouncement(
+      `Added ${extraSources.length} sources: ${extraSources.map((s) => s.short).join(" and ")}. Deep mode questions are unlocked.`,
+    );
+  }
+
+  function resetDemo() {
+    setSourcesAdded(false);
+    setQuestionId(null);
+    setShown(0);
+    setPinned(null);
+    setPreview(null);
+    setTabSource(PAGE_SOURCE_ID);
+    setAnnouncement("Demo reset. No sources added.");
   }
 
   function openTab(id: string) {
@@ -112,7 +161,7 @@ export function Demo() {
           id="demo-title"
           eyebrow="Interactive demo"
           title="Try it on a biology assignment"
-          intro="Three sources on cellular respiration are already loaded. Pick a question, then hover or tab to a citation to see exactly where it came from."
+          intro="You're reading an article about ATP. Ask about it straight away with zero setup, then add a lecture and a paper to see deep mode search across all of them."
         />
 
         <div className="mt-12 border border-line-strong/60 bg-bg shadow-panel">
@@ -123,7 +172,7 @@ export function Demo() {
               role="group"
               aria-label="Open tabs"
             >
-              {sources.map((s) => {
+              {visibleSources.map((s) => {
                 const on = s.id === viewSource.id;
                 return (
                   <button
@@ -182,44 +231,75 @@ export function Demo() {
               aria-label="Crowbar side panel (demo)"
               className="flex min-w-0 flex-col bg-surface"
             >
-              <div className="flex items-center justify-between border-b border-line px-4 py-3">
+              <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
                 <div className="flex items-center gap-2">
                   <LogoMark className="h-5 w-5" />
                   <span className="font-display text-sm font-bold">Crowbar</span>
                 </div>
-                <span className="font-mono text-[0.7rem] text-muted">{sources.length} sources</span>
+                <span
+                  className={`border px-1.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-wider ${
+                    sourcesAdded ? "border-accent text-accent-text" : "border-line text-muted"
+                  }`}
+                >
+                  {sourcesAdded ? `Deep mode · ${visibleSources.length} sources` : "Instant mode"}
+                </span>
               </div>
 
-              <ul
-                className="space-y-1 border-b border-line px-3 py-3"
-                aria-label="Sources in this session"
-              >
-                {sources.map((s) => {
-                  const on = activeLoc?.sourceId === s.id;
-                  return (
-                    <li
-                      key={s.id}
-                      className={`flex items-center gap-2.5 border px-2.5 py-1.5 text-xs transition-colors ${
-                        on ? "border-accent bg-accent/10" : "border-transparent"
-                      }`}
-                    >
-                      <SourceIcon
-                        kind={s.kind}
-                        className={`h-4 w-4 shrink-0 ${on ? "text-accent-text" : "text-muted"}`}
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-ink">{s.title}</span>
-                        <span className="block font-mono text-[0.68rem] text-muted">{s.meta}</span>
-                      </span>
-                      {on && activeLoc ? (
-                        <span className="shrink-0 font-mono text-xs text-accent-text">
-                          {activeLoc.label}
+              <div className="border-b border-line px-3 py-3">
+                <ul className="space-y-1" aria-label="What Crowbar is reading">
+                  {visibleSources.map((s) => {
+                    const on = activeLoc?.sourceId === s.id;
+                    const isPage = s.id === PAGE_SOURCE_ID;
+                    return (
+                      <m.li
+                        key={s.id}
+                        initial={isPage ? false : { opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className={`flex items-center gap-2.5 border px-2.5 py-1.5 text-xs transition-colors ${
+                          on ? "border-accent bg-accent/10" : "border-transparent"
+                        }`}
+                      >
+                        <SourceIcon
+                          kind={s.kind}
+                          className={`h-4 w-4 shrink-0 ${on ? "text-accent-text" : "text-muted"}`}
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-ink">{s.title}</span>
+                          <span className="block font-mono text-[0.68rem] text-muted">
+                            {isPage ? "This page · read when you ask" : `Added · ${s.meta}`}
+                          </span>
                         </span>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
+                        {on && activeLoc ? (
+                          <span className="shrink-0 font-mono text-xs text-accent-text">
+                            {activeLoc.label}
+                          </span>
+                        ) : null}
+                      </m.li>
+                    );
+                  })}
+                </ul>
+
+                {sourcesAdded ? (
+                  <p className="mt-2 px-2.5 font-mono text-[0.68rem] text-muted">
+                    Answers now search all {visibleSources.length} sources.
+                  </p>
+                ) : (
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border border-dashed border-line px-2.5 py-2">
+                    <p className="text-xs text-muted">
+                      No sources added.{" "}
+                      <span className="font-mono text-[0.68rem]">Optional, for advanced work.</span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addSources}
+                      className="inline-flex min-h-9 items-center gap-1.5 border border-ink px-2.5 text-xs font-semibold transition-colors hover:border-accent hover:bg-accent hover:text-accent-ink"
+                    >
+                      <span aria-hidden>+</span> Add sources
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <div className="min-h-[15rem] flex-1 space-y-3 px-4 py-4">
                 {question ? (
@@ -265,9 +345,11 @@ export function Demo() {
                 ) : (
                   <div className="flex h-full min-h-[13rem] flex-col items-center justify-center gap-2 border border-dashed border-line p-4 text-center">
                     <p className="font-mono text-xs uppercase tracking-wider text-muted">
-                      No question yet
+                      Ready on this page
                     </p>
-                    <p className="text-sm text-muted">Pick one of the sample questions below.</p>
+                    <p className="text-sm text-muted">
+                      No setup needed. Start with the first sample question below.
+                    </p>
                   </div>
                 )}
               </div>
@@ -293,33 +375,66 @@ export function Demo() {
                   Sample questions
                 </p>
                 <ul className="space-y-2" aria-labelledby="demo-questions-label">
-                  {questions.map((q) => (
-                    <li key={q.id}>
-                      <button
-                        type="button"
-                        aria-pressed={questionId === q.id}
-                        onClick={() => ask(q.id)}
-                        className={`group flex w-full items-start gap-2 border px-3 py-2.5 text-left text-sm transition-colors ${
-                          questionId === q.id
-                            ? "border-accent bg-accent/10"
-                            : "border-line hover:border-ink"
-                        }`}
-                      >
-                        <span aria-hidden className="font-mono text-accent-text">
-                          ?
-                        </span>
-                        <span>{q.question}</span>
-                      </button>
-                    </li>
-                  ))}
+                  {orderedQuestions.map((q) => {
+                    const locked = q.mode === "deep" && !sourcesAdded;
+                    const pressed = questionId === q.id;
+                    return (
+                      <li key={q.id}>
+                        <button
+                          ref={q.id === firstDeepId ? firstDeepQuestion : undefined}
+                          type="button"
+                          aria-pressed={pressed}
+                          aria-disabled={locked || undefined}
+                          aria-describedby={locked ? "demo-locked-hint" : undefined}
+                          onClick={() => ask(q.id)}
+                          className={`flex w-full items-start gap-2 border px-3 py-2.5 text-left text-sm transition-colors ${
+                            pressed
+                              ? "border-accent bg-accent/10"
+                              : locked
+                                ? "cursor-not-allowed border-dashed border-line text-muted"
+                                : "border-line hover:border-ink"
+                          }`}
+                        >
+                          <span aria-hidden className="font-mono text-accent-text">
+                            ?
+                          </span>
+                          <span className="flex-1">{q.question}</span>
+                          <span
+                            className={`shrink-0 pt-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${
+                              q.mode === "instant" ? "text-muted" : "text-accent-text"
+                            }`}
+                          >
+                            {q.mode === "instant" ? "This page" : locked ? "Needs sources" : "Deep"}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
+                <p id="demo-locked-hint" className="sr-only">
+                  Add sources to unlock this question.
+                </p>
               </div>
             </aside>
           </div>
         </div>
 
-        <p className="mt-4 font-mono text-xs text-muted">
-          Demo uses sample data in your browser. Nothing is sent anywhere.
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="font-mono text-xs text-muted">
+            Demo uses sample data in your browser. Nothing is sent anywhere.
+          </p>
+          {sourcesAdded || questionId ? (
+            <button
+              type="button"
+              onClick={resetDemo}
+              className="font-mono text-xs uppercase tracking-wider text-accent-text underline underline-offset-4"
+            >
+              Reset demo
+            </button>
+          ) : null}
+        </div>
+        <p className="sr-only" aria-live="polite">
+          {announcement}
         </p>
       </div>
     </section>
@@ -415,14 +530,6 @@ function PdfView({ source, loc }: ViewProps) {
 }
 
 function ArticleView({ source, loc }: ViewProps) {
-  const paragraphs = [
-    {
-      n: "¶1",
-      text: "Ask ten students how much ATP one glucose makes and you'll get a handful of different answers.",
-    },
-    { n: "¶3", text: "" },
-    { n: "¶5", text: "" },
-  ];
   return (
     <article className="mx-auto max-w-[36rem]">
       <p className="font-mono text-[0.68rem] uppercase tracking-wider text-muted">
@@ -430,25 +537,25 @@ function ArticleView({ source, loc }: ViewProps) {
       </p>
       <h3 className="mt-2 font-display text-xl font-bold leading-tight">{source.title}</h3>
       <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted">
-        {paragraphs.map((p) => {
-          const isTarget = loc?.label === p.n;
-          const fallback = locators[p.n === "¶3" ? "article-p3" : "article-p5"];
+        <p className="flex gap-3">
+          <span className="w-6 shrink-0 font-mono text-xs text-muted">¶1</span>
+          <span>
+            Ask ten students how much ATP one glucose makes and you&apos;ll get a handful of
+            different answers.
+          </span>
+        </p>
+        {articleParagraphIds.map((id) => {
+          const p = locators[id];
+          const isTarget = loc?.id === id;
           return (
-            <p key={p.n} className="flex gap-3">
+            <p key={id} className="flex gap-3">
               <span
-                className={`w-6 shrink-0 font-mono text-xs ${isTarget ? "text-accent-text" : "text-muted/70"}`}
+                className={`w-6 shrink-0 font-mono text-xs ${isTarget ? "text-accent-text" : "text-muted"}`}
               >
-                {p.n}
+                {p.label}
               </span>
               <span>
-                {p.text ||
-                  (isTarget && loc ? (
-                    <>
-                      {loc.before} <Highlight>{loc.excerpt}</Highlight> {loc.after}
-                    </>
-                  ) : (
-                    `${fallback.before} ${fallback.excerpt} ${fallback.after}`
-                  ))}
+                {p.before} {isTarget ? <Highlight>{p.excerpt}</Highlight> : p.excerpt} {p.after}
               </span>
             </p>
           );

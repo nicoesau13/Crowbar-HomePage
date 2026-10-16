@@ -33,8 +33,15 @@ export type Locator = {
 
 export type Segment = { text: string; cite?: string };
 
+/**
+ * "instant": answered from the page the user is on, no setup.
+ * "deep": needs added sources and searches across all of them.
+ */
+export type QuestionMode = "instant" | "deep";
+
 export type DemoQuestion = {
   id: string;
+  mode: QuestionMode;
   question: string;
   segments: Segment[];
 };
@@ -120,6 +127,15 @@ export const locators: Record<string, Locator> = {
       "The 36–38 figure dates from when P/O ratios were rounded to whole numbers, and it survives in textbooks mostly through inertia.",
     after: "Newer editions have started to correct it.",
   },
+  "article-p4": {
+    id: "article-p4",
+    sourceId: "article",
+    label: "¶4",
+    before: "So what's the real number?",
+    excerpt:
+      "Current estimates, which account for proton leak and transport costs, put the yield closer to 30–32 ATP per glucose.",
+    after: "That's still a lot of energy from one sugar.",
+  },
   "article-p5": {
     id: "article-p5",
     sourceId: "article",
@@ -131,8 +147,10 @@ export const locators: Record<string, Locator> = {
 };
 
 export const questions: DemoQuestion[] = [
+  // Order matters: the hero mock shows questions[0].
   {
     id: "yield",
+    mode: "deep",
     question: "How much ATP does one glucose actually make?",
     segments: [
       { text: "Most current estimates land at about 30–32 ATP per glucose.", cite: "paper-p4" },
@@ -147,26 +165,8 @@ export const questions: DemoQuestion[] = [
     ],
   },
   {
-    id: "disagree",
-    question: "Why do my sources disagree on the number?",
-    segments: [
-      { text: "They assume different P/O ratios." },
-      {
-        text: " Older calculations used whole numbers (3 and 2), while measured ratios are closer to 2.5 and 1.5.",
-        cite: "paper-p7",
-      },
-      {
-        text: " The article argues the higher figure stays in textbooks mostly through inertia.",
-        cite: "article-p3",
-      },
-      {
-        text: " For your exam, the lecture treats 36–38 as the expected answer.",
-        cite: "lecture-1245",
-      },
-    ],
-  },
-  {
     id: "oxygen",
+    mode: "deep",
     question: "What happens if there's no oxygen?",
     segments: [
       {
@@ -183,7 +183,31 @@ export const questions: DemoQuestion[] = [
       },
     ],
   },
+  {
+    id: "page",
+    mode: "instant",
+    question: "Is the 36–38 ATP figure actually right?",
+    segments: [
+      {
+        text: "Not quite, according to this article. The 36–38 figure comes from rounding P/O ratios to whole numbers, and it survives in textbooks mostly through inertia.",
+        cite: "article-p3",
+      },
+      {
+        text: " Current estimates that account for proton leak put the real yield closer to 30–32 ATP.",
+        cite: "article-p4",
+      },
+      {
+        text: " This page doesn't say which number your course expects, so add your lecture to check.",
+      },
+    ],
+  },
 ];
+
+/** The page the user is "on" in the demo. Instant mode reads only this. */
+export const PAGE_SOURCE_ID = "article";
+
+/** Article paragraphs rendered in the page view, in order. */
+export const articleParagraphIds = ["article-p3", "article-p4", "article-p5"];
 
 export function getSource(id: string): Source {
   const source = sources.find((s) => s.id === id);
@@ -193,5 +217,6 @@ export function getSource(id: string): Source {
 
 export function citationLabel(locatorId: string): string {
   const loc = locators[locatorId];
-  return `${getSource(loc.sourceId).short} · ${loc.label}`;
+  const name = loc.sourceId === PAGE_SOURCE_ID ? "This page" : getSource(loc.sourceId).short;
+  return `${name} · ${loc.label}`;
 }

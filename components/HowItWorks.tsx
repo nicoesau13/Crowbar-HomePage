@@ -13,19 +13,32 @@ export function HowItWorks() {
         <SectionHeader
           id="how-title"
           eyebrow="How it works"
-          title="Three steps, and the last one is the point"
-          intro="Speed is nice. Being able to check every sentence is what makes an answer usable for coursework."
+          title="Open a page and ask. Go deeper only if you need to."
+          intro="Instant mode needs zero setup: Crowbar answers from the page you're on. Deep mode is there when the assignment gets bigger."
         />
 
         <ol className="mt-14 grid gap-6 md:grid-cols-3">
           {steps.map((step, i) => (
             <li key={step.n}>
-              <Reveal delay={i * 0.08} className="card flex h-full flex-col p-6">
-                <div className="flex items-baseline justify-between border-b border-line pb-4">
+              <Reveal
+                delay={i * 0.08}
+                className={`flex h-full flex-col rounded-sm border p-6 ${
+                  step.optional
+                    ? "border-dashed border-line-strong/70 bg-bg"
+                    : "border-line bg-surface"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 border-b border-line pb-4">
                   <span className="font-mono text-sm text-accent-text">{step.n}</span>
-                  <span aria-hidden className="font-mono text-xs text-muted">
-                    {i < steps.length - 1 ? "→" : "■"}
-                  </span>
+                  {step.optional ? (
+                    <span className="border border-accent px-2 py-0.5 font-mono text-[0.68rem] uppercase tracking-wider text-accent-text">
+                      Optional, for advanced work
+                    </span>
+                  ) : (
+                    <span aria-hidden className="font-mono text-xs text-muted">
+                      →
+                    </span>
+                  )}
                 </div>
                 <h3 className="mt-5 font-display text-display-md font-bold">{step.title}</h3>
                 <p className="mt-3 flex-1 leading-relaxed text-muted">{step.body}</p>

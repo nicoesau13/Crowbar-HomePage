@@ -50,7 +50,7 @@ tailwind.config.ts      design tokens: semantic colors, fonts, fluid type, spaci
 
 - **Copy:** `lib/content.ts`. Every section reads from here.
 - **Title, description, domain, nav:** `lib/site.ts`.
-- **Demo scenario:** `lib/demo-data.ts`. Add sources, `locators` (timestamp/page/paragraph plus the quoted excerpt), and questions made of `segments` that reference a locator via `cite`.
+- **Demo scenario:** `lib/demo-data.ts`. Add sources, `locators` (timestamp/page/paragraph plus the quoted excerpt), and questions made of `segments` that reference a locator via `cite`. `PAGE_SOURCE_ID` is the page the visitor is "on" (cited as "This page"). Each question has a `mode`: `instant` questions answer from that page alone; `deep` questions stay locked until the visitor clicks **Add sources**. The hero mock shows `questions[0]`.
 - **Early-access backend:** `components/EarlyAccessForm.tsx`. Search for `TODO(backend)`. Right now nothing is stored or sent.
 - **Brand colors:** the CSS variables at the top of `app/globals.css` (light on `:root`, dark on `.dark`).
 - **Fonts:** `app/layout.tsx` (`Bricolage_Grotesque`, `Inter`, `JetBrains_Mono`).
