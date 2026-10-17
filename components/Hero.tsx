@@ -52,6 +52,9 @@ export function Hero() {
             <a href={hero.secondaryCta.href} className="btn-ghost h-12 px-6 text-base">
               {hero.secondaryCta.label}
             </a>
+            <a href="/video" className="btn-ghost h-12 px-6 text-base">
+              Watch the video
+            </a>
           </div>
           <p className="mt-5 font-mono text-xs text-muted">{hero.note}</p>
         </div>

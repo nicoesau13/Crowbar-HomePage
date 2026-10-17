@@ -7,7 +7,6 @@ import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { Problem } from "@/components/Problem";
-import { VideoSection } from "@/components/VideoSection";
 
 export default function HomePage() {
   return (
@@ -15,7 +14,6 @@ export default function HomePage() {
       <Nav />
       <main id="main">
         <Hero />
-        <VideoSection />
         <Problem />
         <HowItWorks />
         <DemoGate />

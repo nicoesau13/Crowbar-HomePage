@@ -8,6 +8,7 @@ export const site = {
   nav: [
     { label: "How it works", href: "#how-it-works" },
     { label: "Demo", href: "/demo" },
+    { label: "Video", href: "/video" },
     { label: "Features", href: "#features" },
     { label: "FAQ", href: "#faq" },
   ],
