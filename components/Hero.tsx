@@ -49,10 +49,16 @@ export function Hero() {
               {site.ctaLabel}
               <span aria-hidden>→</span>
             </a>
-            <a href={hero.secondaryCta.href} className="btn-ghost h-12 px-6 text-base">
+            <a
+              href={hero.secondaryCta.href}
+              className="inline-flex h-12 items-center px-2 text-base font-medium text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+            >
               {hero.secondaryCta.label}
             </a>
-            <a href="/video" className="btn-ghost h-12 px-6 text-base">
+            <a
+              href="/video"
+              className="inline-flex h-12 items-center px-2 text-base font-medium text-muted underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+            >
               Watch the video
             </a>
           </div>

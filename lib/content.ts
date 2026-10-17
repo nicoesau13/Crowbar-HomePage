@@ -54,11 +54,6 @@ export const steps = [
 
 export const features = [
   {
-    key: "page",
-    title: "Knows what you're looking at",
-    body: "Crowbar reads the page you're on, whether it's an article, a video or a PDF, so you can ask right away. Nothing to copy, paste or upload.",
-  },
-  {
     key: "cite",
     title: "Exact citations",
     body: "Timestamps for video, page and highlighted passage for PDFs, paragraph for articles. Specific enough to quote.",

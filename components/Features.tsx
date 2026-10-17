@@ -14,14 +14,6 @@ function FeatureIcon({ name }: { name: FeatureKey }) {
     "aria-hidden": true,
   } as const;
   switch (name) {
-    case "page":
-      return (
-        <svg {...common}>
-          <path d="M6 3h14l6 6v20H6z" />
-          <path d="M20 3v6h6M10 14h12M10 19h12M10 24h8" />
-          <path d="M3 16.5h26" strokeWidth="2.25" className="stroke-accent" />
-        </svg>
-      );
     case "cite":
       return (
         <svg {...common}>
@@ -63,15 +55,10 @@ export function Features() {
           title="Built to be checked, not just believed"
         />
 
-        {/* 5 cards: two wide on top, three below (lg); last card spans both columns on sm. */}
-        <ul className="mt-14 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-6">
+        {/* 3 cards: stacked on mobile, one row from md. */}
+        <ul className="mt-14 grid gap-px border border-line bg-line md:grid-cols-3">
           {features.map((f, i) => (
-            <li
-              key={f.key}
-              className={`bg-bg ${i < 2 ? "lg:col-span-3" : "lg:col-span-2"} ${
-                i === features.length - 1 ? "sm:col-span-2" : ""
-              }`}
-            >
+            <li key={f.key} className="bg-bg">
               <Reveal
                 delay={i * 0.06}
                 className="group flex h-full flex-col p-6 transition-colors hover:bg-surface sm:p-7"
