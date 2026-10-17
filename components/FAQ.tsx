@@ -2,6 +2,7 @@
 
 import { AnimatePresence, m } from "framer-motion";
 import { useRef, useState, type KeyboardEvent } from "react";
+import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { faqs } from "@/lib/content";
 
@@ -53,7 +54,7 @@ export function FAQ() {
           intro="Crowbar is still being built. Where something isn't ready yet, we say so."
         />
 
-        <div className="border-t border-line">
+        <Reveal delay={0.1} className="border-t border-line">
           {faqs.map((item, i) => {
             const isOpen = open.has(i);
             const btnId = `faq-btn-${i}`;
@@ -107,7 +108,7 @@ export function FAQ() {
               </div>
             );
           })}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

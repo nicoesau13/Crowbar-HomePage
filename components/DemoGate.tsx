@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { Reveal } from "@/components/ui/Reveal";
 
 /** Replaces the inline demo on the home page: the demo lives at /demo. */
 export function DemoGate() {
   return (
     <section id="demo" aria-label="Interactive demo" className="border-b border-line py-16">
-      <div className="container-page flex flex-col items-center gap-3 text-center">
+      <Reveal className="container-page flex flex-col items-center gap-3 text-center">
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/demo"
@@ -20,7 +21,7 @@ export function DemoGate() {
           </Link>
         </div>
         <p className="font-mono text-xs text-muted">Each opens on its own page. Demo uses sample data.</p>
-      </div>
+      </Reveal>
     </section>
   );
 }
