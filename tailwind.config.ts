@@ -54,7 +54,7 @@ const config: Config = {
         // Section rhythm on top of Tailwind's 4px scale.
         gutter: "1rem",
         "gutter-lg": "2rem",
-        section: "clamp(4.5rem, 3rem + 6vw, 8rem)",
+        section: "clamp(5rem, 3.5rem + 7vw, 9rem)",
       },
       maxWidth: {
         content: "75rem",

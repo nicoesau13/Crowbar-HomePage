@@ -15,6 +15,12 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_80%_70%_at_30%_40%,#000_40%,transparent_100%)]"
       />
 
+      {/* Soft accent glow behind the panel mock */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 top-1/2 hidden h-[34rem] w-[34rem] -translate-y-1/2 rounded-full bg-accent/15 blur-[110px] lg:block"
+      />
+
       <div className="container-page relative grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-28">
         <div>
           <p className="eyebrow flex items-center gap-2">

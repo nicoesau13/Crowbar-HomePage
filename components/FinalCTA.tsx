@@ -14,6 +14,10 @@ export function FinalCTA() {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-grid [mask-image:linear-gradient(to_bottom,transparent,#000_30%,#000_70%,transparent)]"
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[40rem] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[100px]"
+      />
       <div className="container-page relative">
         <Reveal className="relative mx-auto max-w-3xl border border-line-strong/60 bg-surface p-6 shadow-hard-accent sm:p-10">
           <LogoMark className="h-10 w-10" />

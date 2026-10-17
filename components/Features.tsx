@@ -61,8 +61,12 @@ export function Features() {
             <li key={f.key} className="bg-bg">
               <Reveal
                 delay={i * 0.06}
-                className="group flex h-full flex-col p-6 transition-colors hover:bg-surface sm:p-7"
+                className="group relative flex h-full flex-col p-6 transition-colors duration-300 hover:bg-surface sm:p-8"
               >
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 group-hover:scale-x-100"
+                />
                 <div className="flex items-start justify-between">
                   <span className="text-ink">
                     <FeatureIcon name={f.key} />
