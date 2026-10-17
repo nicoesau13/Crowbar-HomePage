@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Demo } from "@/components/Demo";
 import { Footer } from "@/components/Footer";
 
@@ -12,12 +13,12 @@ export default function DemoPage() {
     <>
       <header className="border-b border-line">
         <div className="container-page flex h-14 items-center justify-between">
-          <a href="/" className="font-mono text-xs uppercase tracking-wider text-muted hover:text-ink">
+          <Link href="/" className="font-mono text-xs uppercase tracking-wider text-muted hover:text-ink">
             ← Crowbar
-          </a>
-          <a href="/#early-access" className="btn-primary hidden sm:inline-flex">
+          </Link>
+          <Link href="/#early-access" className="btn-primary hidden sm:inline-flex">
             Get early access
-          </a>
+          </Link>
         </div>
       </header>
       <main id="main">
